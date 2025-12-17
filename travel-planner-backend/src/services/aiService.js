@@ -5,7 +5,6 @@ import { logger } from '../utils/logger.js';
 
 export const generateItinerary = async (tripData) => {
   try {
-    // ✅ Log received trip data
     logger.info('AI Service received trip data:', {
       destination: tripData.destination,
       budget: tripData.budget,
@@ -15,10 +14,7 @@ export const generateItinerary = async (tripData) => {
     });
 
     const { systemPrompt, userPrompt } = buildTravelPrompt(tripData);
-
-    // ✅ Log a snippet of the prompt to verify it includes all details
     logger.debug('Prompt preview:', userPrompt.substring(0, 500) + '...');
-
     logger.info('🤖 Calling OpenRouter AI...');
 
     const response = await axios.post(
@@ -55,13 +51,40 @@ export const generateItinerary = async (tripData) => {
     const aiContent = response.data.choices[0].message.content;
     logger.success('✅ AI response received');
 
+    // ✅ Clean markdown code blocks - using String.fromCharCode to avoid backtick issues
+    const BACKTICK = String.fromCharCode(96);
+    const CODE_BLOCK = BACKTICK + BACKTICK + BACKTICK;
+    const JSON_CODE_BLOCK = CODE_BLOCK + 'json';
+    
     let cleanedContent = aiContent.trim();
-    cleanedContent = cleanedContent.replace(/``````\n?/g, '');
+    
+    // Remove ```
+    if (cleanedContent.startsWith(JSON_CODE_BLOCK)) {
+      const firstNewline = cleanedContent.indexOf('\n');
+      if (firstNewline !== -1) {
+        cleanedContent = cleanedContent.substring(firstNewline + 1);
+      }
+    } 
+    // Remove ``` at start
+    else if (cleanedContent.startsWith(CODE_BLOCK)) {
+      cleanedContent = cleanedContent.substring(3);
+    }
+    
     cleanedContent = cleanedContent.trim();
+    
+    // Remove ```
+    if (cleanedContent.endsWith(CODE_BLOCK)) {
+      cleanedContent = cleanedContent.substring(0, cleanedContent.length - 3);
+    }
+    
+    cleanedContent = cleanedContent.trim();
+
+    logger.debug('Cleaned content starts with:', cleanedContent.substring(0, 50));
 
     let parsedItinerary;
     try {
       parsedItinerary = JSON.parse(cleanedContent);
+      logger.success('✅ JSON parsed successfully');
     } catch (parseError) {
       logger.error('Failed to parse AI response:', parseError.message);
       
@@ -70,7 +93,7 @@ export const generateItinerary = async (tripData) => {
         logger.warn('⚠️ Used salvaged JSON response');
         parsedItinerary = salvaged;
       } else {
-        logger.error('Full AI Response:', cleanedContent);
+        logger.error('Cleaned content preview:', cleanedContent.substring(0, 300));
         throw new Error('AI generated invalid JSON format. Please try again.');
       }
     }
@@ -85,17 +108,17 @@ export const generateItinerary = async (tripData) => {
 
     logger.success(`✅ Generated itinerary with ${parsedItinerary.days.length} days`);
     return parsedItinerary;
-
   } catch (error) {
     logger.error('AI Service Error:', error.message);
-
+    
     if (error.response) {
       logger.error('AI API Response Error:', {
         status: error.response.status,
         data: error.response.data,
       });
-      
+
       const errorMsg = error.response.data.error?.message || 'Unknown error';
+      
       if (error.response.status === 402) {
         throw new Error('Insufficient OpenRouter credits. Please add more credits.');
       } else if (error.response.status === 429) {
@@ -111,20 +134,45 @@ export const generateItinerary = async (tripData) => {
 
 const attemptJSONSalvage = (incompleteJSON) => {
   try {
-    let fixed = incompleteJSON.replace(/,(\s*[}\]])/g, '$1');
+    const BACKTICK = String.fromCharCode(96);
+    const CODE_BLOCK = BACKTICK + BACKTICK + BACKTICK;
+    const JSON_CODE_BLOCK = CODE_BLOCK + 'json';
     
+    let fixed = incompleteJSON.trim();
+    
+    // Remove ```json at start
+    if (fixed.startsWith(JSON_CODE_BLOCK)) {
+      const firstNewline = fixed.indexOf('\n');
+      if (firstNewline !== -1) {
+        fixed = fixed.substring(firstNewline + 1);
+      }
+    } 
+    // Remove ```
+    else if (fixed.startsWith(CODE_BLOCK)) {
+      fixed = fixed.substring(3);
+    }
+    
+    fixed = fixed.trim();
+    
+    // Remove ``` at end
+    if (fixed.endsWith(CODE_BLOCK)) {
+      fixed = fixed.substring(0, fixed.length - 3);
+    }
+    
+    fixed = fixed.trim();
+    
+    // Remove trailing commas
+    fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+
     const openBraces = (fixed.match(/{/g) || []).length;
     const closeBraces = (fixed.match(/}/g) || []).length;
     const openBrackets = (fixed.match(/\[/g) || []).length;
     const closeBrackets = (fixed.match(/]/g) || []).length;
 
-    const lastQuote = fixed.lastIndexOf('"');
-    const lastComma = fixed.lastIndexOf(',');
-    const lastBrace = fixed.lastIndexOf('}');
-    const lastBracket = fixed.lastIndexOf(']');
-    
     if (!['}', ']', '"'].includes(fixed.trim().slice(-1))) {
       const lastColon = fixed.lastIndexOf(':');
+      const lastComma = fixed.lastIndexOf(',');
+      
       if (lastColon > lastComma) {
         fixed = fixed.substring(0, lastColon) + ': ""';
       }
@@ -143,7 +191,7 @@ const attemptJSONSalvage = (incompleteJSON) => {
     if (parsed.days && Array.isArray(parsed.days) && parsed.days.length > 0) {
       return parsed;
     }
-    
+
     return null;
   } catch (e) {
     return null;
