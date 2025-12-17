@@ -57,7 +57,7 @@ travel-planner-frontend/
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── router.jsx
-├── .env.local
+├── vercel.json
 ├── .env.example
 ├── .gitignore
 ├── index.html
