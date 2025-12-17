@@ -1,8 +1,4 @@
-# 🌍 AI Travel Planner
-
-<p align="center">
-  <img src="https://res.cloudinary.com/drit9nkha/image/upload/v1765941772/TP_LOGO_xiaun4.png" alt="Travel Planner Logo" width="180"/>
-</p>
+# <img src="https://res.cloudinary.com/drit9nkha/image/upload/v1765941772/TP_LOGO_xiaun4.png" alt="AI Travel Planner Logo" width="36" style="vertical-align: middle;"/> AI Travel Planner
 
 An intelligent travel planning application powered by AI that generates personalized day-by-day itineraries based on user preferences, budget, and travel style.
 
