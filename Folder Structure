@@ -1,0 +1,108 @@
+travel-planner-frontend/
+├── public/
+│   └── favicon.ico
+├── src/
+│   ├── assets/
+│   │   └── logo.png
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Loader.jsx
+│   │   │   ├── EmptyState.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   ├── auth/
+│   │   │   ├── LoginForm.jsx
+│   │   │   └── SignupForm.jsx
+│   │   ├── dashboard/
+│   │   │   ├── DashboardHeader.jsx
+│   │   │   ├── RecentTrips.jsx
+│   │   │   └── StatsCard.jsx
+│   │   ├── trip/
+│   │   │   ├── TripWizard.jsx
+│   │   │   ├── StepOne.jsx
+│   │   │   ├── StepTwo.jsx
+│   │   │   ├── StepThree.jsx
+│   │   │   ├── TripCard.jsx
+│   │   │   └── ItineraryView.jsx
+│   │   └── itinerary/
+│   │       ├── DayCard.jsx
+│   │       ├── ActivityBlock.jsx
+│   │       └── EditableNotes.jsx
+│   ├── pages/
+│   │   ├── Landing.jsx
+│   │   ├── Login.jsx
+│   │   ├── Signup.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── CreateTrip.jsx
+│   │   ├── TripResult.jsx
+│   │   ├── MyTrips.jsx
+│   │   └── NotFound.jsx
+│   ├── services/
+│   │   ├── api.js
+│   │   ├── authService.js
+│   │   └── tripService.js
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   └── useTrip.js
+│   ├── utils/
+│   │   ├── constants.js
+│   │   ├── helpers.js
+│   │   └── validators.js
+│   ├── styles/
+│   │   └── index.css
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── router.jsx
+├── .env.local
+├── .env.example
+├── .gitignore
+├── index.html
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+├── vite.config.js
+└── README.md
+
+
+travel-planner-backend/
+├── src/
+│   ├── config/
+│   │   ├── database.js
+│   │   └── env.js
+│   ├── models/
+│   │   ├── User.js
+│   │   └── Trip.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── tripController.js
+│   │   └── userController.js
+│   ├── services/
+│   │   ├── aiService.js
+│   │   └── promptService.js
+│   ├── middlewares/
+│   │   ├── auth.js
+│   │   ├── errorHandler.js
+│   │   ├── rateLimiter.js
+│   │   └── validator.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── tripRoutes.js
+│   │   └── userRoutes.js
+│   ├── utils/
+│   │   ├── jwt.js
+│   │   ├── logger.js
+│   │   └── response.js
+│   ├── validators/
+│   │   ├── authValidators.js
+│   │   └── tripValidators.js
+│   ├── app.js
+│   └── server.js
+├── .env
+├── .env.example
+├── .gitignore
+├── package.json
+└── README.md
