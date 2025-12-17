@@ -3,8 +3,10 @@ import DayCard from '@components/itinerary/DayCard';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 
+
 const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
-  const [expandedDays, setExpandedDays] = useState([]); // ✅ Changed from [0] to [] - all collapsed by default
+  const [expandedDays, setExpandedDays] = useState([0]); // ✅ Changed from [] to [0] - first day open by default
+
 
   const toggleDay = (index) => {
     setExpandedDays((prev) =>
@@ -12,13 +14,16 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
     );
   };
 
+
   const expandAll = () => {
     setExpandedDays(trip.aiPlan.days.map((_, i) => i));
   };
 
+
   const collapseAll = () => {
     setExpandedDays([]);
   };
+
 
   return (
     <div className="space-y-4">
@@ -46,6 +51,7 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
         </div>
       </div>
 
+
       {/* Overview */}
       {trip.aiPlan.overview && (
         <div className="card">
@@ -53,6 +59,7 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
           <p className="text-sm text-gray-700">{trip.aiPlan.overview}</p>
         </div>
       )}
+
 
       {/* Day Cards */}
       <div className="space-y-3">
@@ -68,6 +75,7 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
         ))}
       </div>
 
+
       {/* Tips Section */}
       {trip.aiPlan.tips && trip.aiPlan.tips.length > 0 && (
         <div className="card">
@@ -82,6 +90,7 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
           </ul>
         </div>
       )}
+
 
       {/* Budget & Logistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -99,6 +108,7 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
         )}
       </div>
 
+
       {trip.aiPlan.transportation && (
         <div className="card">
           <h3 className="text-sm font-semibold text-dark-900 mb-1">🚗 Transportation</h3>
@@ -108,5 +118,6 @@ const ItineraryView = ({ trip, onUpdate, onRegenerate, loading }) => {
     </div>
   );
 };
+
 
 export default ItineraryView;
